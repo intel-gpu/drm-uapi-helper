@@ -370,6 +370,16 @@ extern "C" {
 	((((__u64)DRM_FORMAT_MOD_VENDOR_## vendor) << 56) | ((val) & 0x00ffffffffffffffULL))
 
 /*
+ * Intel modifiers for new platforms should be added using the PRELIM_ prefix
+ * and the intel_prelim_fourcc_mod_code macro, while the upstreaming of the
+ * platform should happen without the prefix using the fourcc_mod_code macro.
+ */
+#define INTEL_PRELIM_ID_FLAG         (1ULL << 55)
+
+#define intel_prelim_fourcc_mod_code(val) \
+	(fourcc_mod_code(INTEL, (val)) | INTEL_PRELIM_ID_FLAG)
+
+/*
  * Format Modifier tokens:
  *
  * When adding a new token please document the layout with a code comment,
@@ -527,38 +537,6 @@ extern "C" {
  */
 #define I915_FORMAT_MOD_Y_TILED_GEN12_MC_CCS fourcc_mod_code(INTEL, 7)
 
-/* FIXME: ID #8 is reserved for TGL CCS_CC */
-
-/*
- * Intel color control surfaces (CCS) for DG2 render compression.
- *
- * DG2 uses a new compression format for render compression. The general
- * layout is the same as I915_FORMAT_MOD_Y_TILED_GEN12_RC_CCS,
- * but a new hashing/compression algorithm is used, so a fresh modifier must
- * be associated with buffers of this type. Render compression uses 128 byte
- * compression blocks.
- */
-#define I915_FORMAT_MOD_F_TILED_DG2_RC_CCS fourcc_mod_code(INTEL, 9)
-
-/*
- * Intel color control surfaces (CCS) for DG2 media compression.
- *
- * DG2 uses a new compression format for media compression. The general
- * layout is the same as I915_FORMAT_MOD_Y_TILED_GEN12_RC_CCS,
- * but a new hashing/compression algorithm is used, so a fresh modifier must
- * be associated with buffers of this type. Media compression uses 256 byte
- * compression blocks.
- */
-#define I915_FORMAT_MOD_F_TILED_DG2_MC_CCS fourcc_mod_code(INTEL, 10)
-
-/*
- * Intel color control surfaces (CCS) for DG2 clear color render compression.
- *
- * DG2 uses a unified compression format for clear color render compression.
- * The general layout is a tiled layout using 4Kb tiles i.e. Tile4 layout.
- */
-#define I915_FORMAT_MOD_F_TILED_DG2_RC_CCS_CC fourcc_mod_code(INTEL, 11)
-
 /*
  * Intel Color Control Surface with Clear Color (CCS) for Gen-12 render
  * compression.
@@ -577,6 +555,12 @@ extern "C" {
  * pitch is required to be a multiple of 4 tile widths.
  */
 #define I915_FORMAT_MOD_Y_TILED_GEN12_RC_CCS_CC fourcc_mod_code(INTEL, 8)
+
+/*
+ * TODO: Remove the non-PRELIM version of DG2 CCS modifiers in the 9-11 ID range
+ *       Backport the upstream ADL-P CCS modifiers using the 9-11 ID range.
+ */
+
 /*
  * Intel F-tiling(aka Tile4) layout
  *
@@ -585,6 +569,39 @@ extern "C" {
  * (16 bytes) chunks column-major..
  */
 #define I915_FORMAT_MOD_F_TILED         fourcc_mod_code(INTEL, 12)
+
+/*
+ * Intel color control surfaces (CCS) for DG2 render compression.
+ *
+ * DG2 uses a new compression format for render compression. The general
+ * layout is the same as I915_FORMAT_MOD_Y_TILED_GEN12_RC_CCS,
+ * but a new hashing/compression algorithm is used, so a fresh modifier must
+ * be associated with buffers of this type. Render compression uses 128 byte
+ * compression blocks.
+ */
+#define I915_FORMAT_MOD_F_TILED_DG2_RC_CCS fourcc_mod_code(INTEL, 9)
+#define PRELIM_I915_FORMAT_MOD_F_TILED_DG2_RC_CCS intel_prelim_fourcc_mod_code(13)
+
+/*
+ * Intel color control surfaces (CCS) for DG2 media compression.
+ *
+ * DG2 uses a new compression format for media compression. The general
+ * layout is the same as I915_FORMAT_MOD_Y_TILED_GEN12_RC_CCS,
+ * but a new hashing/compression algorithm is used, so a fresh modifier must
+ * be associated with buffers of this type. Media compression uses 256 byte
+ * compression blocks.
+ */
+#define I915_FORMAT_MOD_F_TILED_DG2_MC_CCS fourcc_mod_code(INTEL, 10)
+#define PRELIM_I915_FORMAT_MOD_F_TILED_DG2_MC_CCS intel_prelim_fourcc_mod_code(14)
+
+/*
+ * Intel color control surfaces (CCS) for DG2 clear color render compression.
+ *
+ * DG2 uses a unified compression format for clear color render compression.
+ * The general layout is a tiled layout using 4Kb tiles i.e. Tile4 layout.
+ */
+#define I915_FORMAT_MOD_F_TILED_DG2_RC_CCS_CC fourcc_mod_code(INTEL, 11)
+#define PRELIM_I915_FORMAT_MOD_F_TILED_DG2_RC_CCS_CC intel_prelim_fourcc_mod_code(15)
 
 /*
  * Tiled, NV12MT, grouped in 64 (pixels) x 32 (lines) -sized macroblocks

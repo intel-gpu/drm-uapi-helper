@@ -17,13 +17,6 @@
  * synchronized with values in i915_drm.h.
  */
 
-struct prelim_i915_tiling {
-#define PRELIM_I915_TILING_F	3
-#define PRELIM_I915_TILING_LAST	PRELIM_I915_TILING_F
-#define I915_TILING_F		PRELIM_I915_TILING_F
-#define I915_TILING_LAST	PRELIM_I915_TILING_LAST
-};
-
 struct prelim_i915_uevent {
 /*
  * PRELIM_I915_RESET_FAILED_UEVENT - Event is generated when engine or GPU
@@ -33,7 +26,6 @@ struct prelim_i915_uevent {
  *	either engine or GPU is made.
  */
 #define PRELIM_I915_RESET_FAILED_UEVENT	"RESET_FAILED"
-#define I915_RESET_FAILED_UEVENT	"RESET_FAILED"
 
 /*
  * PRELIM_I915_MEMORY_HEALTH_UEVENT - Generated when driver receives a memory
@@ -45,20 +37,31 @@ struct prelim_i915_uevent {
  *	reboot - for recovery of failed BANK.
  */
 #define PRELIM_I915_MEMORY_HEALTH_UEVENT	"MEMORY_HEALTH"
-#define I915_MEMORY_HEALTH_UEVENT	"MEMORY_HEALTH"
 };
+
+/*
+ * PRELIM UAPI VERSION - /sys/<...>/drm/card<n>/prelim_uapi_version
+ * MAJOR - to be incremented right after a major public Production branch
+ *         release containing PRELIM uAPIs
+ *         PROD_DG1_201210.0 released so starting with major = 2, although
+ *         it didn't have the proper prelim api infrastructure yet.
+ * MINOR - Reset to 0 when MAJOR is bumped.
+ *         Bumped as needed when some kind of API incompatibility is identified.
+ *         This patch, which introduces this, should be the only patch in
+ *         the pile that is changing this number.
+ */
+#define PRELIM_UAPI_MAJOR	2
+#define PRELIM_UAPI_MINOR	0
 
 /*
  * Top 8 bits of every non-engine counter are GT id.
  * FIXME: __PRELIM_I915_PMU_GT_SHIFT will be changed to 56
  */
 #define __PRELIM_I915_PMU_GT_SHIFT (60)
-#define __I915_PMU_GT_SHIFT (60)
 
 #define ___PRELIM_I915_PMU_OTHER(gt, x) \
 	(((__u64)__I915_PMU_ENGINE(0xff, 0xff, 0xf) + 1 + (x)) | \
 	((__u64)(gt) << __PRELIM_I915_PMU_GT_SHIFT))
-#define ___I915_PMU_OTHER ___PRELIM_I915_PMU_OTHER
 
 #define __I915_PMU_OTHER(x) ___PRELIM_I915_PMU_OTHER(0, x)
 
@@ -74,21 +77,11 @@ struct prelim_i915_uevent {
 #define __PRELIM_I915_PMU_MEDIA_GROUP_BUSY(gt)		___PRELIM_I915_PMU_OTHER(gt, 9)
 #define __PRELIM_I915_PMU_ANY_ENGINE_GROUP_BUSY(gt)	___PRELIM_I915_PMU_OTHER(gt, 10)
 
-#define __I915_PMU_ACTUAL_FREQUENCY		__PRELIM_I915_PMU_ACTUAL_FREQUENCY
-#define __I915_PMU_REQUESTED_FREQUENCY		__PRELIM_I915_PMU_REQUESTED_FREQUENCY
-#define __I915_PMU_INTERRUPTS			__PRELIM_I915_PMU_INTERRUPTS
-#define __I915_PMU_RC6_RESIDENCY		__PRELIM_I915_PMU_RC6_RESIDENCY
-#define __I915_PMU_SOFTWARE_GT_AWAKE_TIME	__PRELIM_I915_PMU_SOFTWARE_GT_AWAKE_TIME
-#define __I915_PMU_ENGINE_RESET_COUNT		__PRELIM_I915_PMU_ENGINE_RESET_COUNT
-#define __I915_PMU_EU_ATTENTION_COUNT		__PRELIM_I915_PMU_EU_ATTENTION_COUNT
 
 #define __PRELIM_I915_PMU_HW_ERROR_EVENT_ID_OFFSET	(__I915_PMU_OTHER(0) + 1000)
-#define __I915_PMU_HW_ERROR_EVENT_ID_OFFSET	__PRELIM_I915_PMU_HW_ERROR_EVENT_ID_OFFSET
 
 #define PRELIM_I915_PMU_ENGINE_RESET_COUNT	__PRELIM_I915_PMU_ENGINE_RESET_COUNT(0)
-#define I915_PMU_ENGINE_RESET_COUNT		PRELIM_I915_PMU_ENGINE_RESET_COUNT
 #define PRELIM_I915_PMU_EU_ATTENTION_COUNT	__PRELIM_I915_PMU_EU_ATTENTION_COUNT(0)
-#define I915_PMU_EU_ATTENTION_COUNT		PRELIM_I915_PMU_EU_ATTENTION_COUNT
 #define PRELIM_I915_PMU_RENDER_GROUP_BUSY              __PRELIM_I915_PMU_RENDER_GROUP_BUSY(0)
 #define PRELIM_I915_PMU_COPY_GROUP_BUSY                __PRELIM_I915_PMU_COPY_GROUP_BUSY(0)
 #define PRELIM_I915_PMU_MEDIA_GROUP_BUSY               __PRELIM_I915_PMU_MEDIA_GROUP_BUSY(0)
@@ -113,22 +106,6 @@ struct prelim_i915_uevent {
 #define PRELIM_I915_PMU_GT_ERROR_FATAL_SLM			(13)
 #define PRELIM_I915_PMU_GT_ERROR_FATAL_EU_IC			(14)
 #define PRELIM_I915_PMU_GT_ERROR_FATAL_EU_GRF			(15)
-#define I915_PMU_GT_ERROR_CORRECTABLE_L3_SNG		(0)
-#define I915_PMU_GT_ERROR_CORRECTABLE_GUC		(1)
-#define I915_PMU_GT_ERROR_CORRECTABLE_SAMPLER		(2)
-#define I915_PMU_GT_ERROR_CORRECTABLE_SLM		(3)
-#define I915_PMU_GT_ERROR_CORRECTABLE_EU_IC		(4)
-#define I915_PMU_GT_ERROR_CORRECTABLE_EU_GRF		(5)
-#define I915_PMU_GT_ERROR_FATAL_ARR_BIST		(6)
-#define I915_PMU_GT_ERROR_FATAL_L3_DOUB			(7)
-#define I915_PMU_GT_ERROR_FATAL_L3_ECC_CHK		(8)
-#define I915_PMU_GT_ERROR_FATAL_GUC			(9)
-#define I915_PMU_GT_ERROR_FATAL_IDI_PAR			(10)
-#define I915_PMU_GT_ERROR_FATAL_SQIDI			(11)
-#define I915_PMU_GT_ERROR_FATAL_SAMPLER			(12)
-#define I915_PMU_GT_ERROR_FATAL_SLM			(13)
-#define I915_PMU_GT_ERROR_FATAL_EU_IC			(14)
-#define I915_PMU_GT_ERROR_FATAL_EU_GRF			(15)
 #define PRELIM_I915_PMU_SGUNIT_ERROR_CORRECTABLE		(16)
 #define PRELIM_I915_PMU_SGUNIT_ERROR_NONFATAL			(17)
 #define PRELIM_I915_PMU_SGUNIT_ERROR_FATAL			(18)
@@ -152,29 +129,6 @@ struct prelim_i915_uevent {
 #define PRELIM_I915_PMU_SOC_ERROR_FATAL_MDFI_EAST		(36)
 #define PRELIM_I915_PMU_SOC_ERROR_FATAL_MDFI_WEST		(37)
 #define PRELIM_I915_PMU_SOC_ERROR_FATAL_MDFI_SOUTH		(38)
-#define I915_PMU_SGUNIT_ERROR_CORRECTABLE		(16)
-#define I915_PMU_SGUNIT_ERROR_NONFATAL			(17)
-#define I915_PMU_SGUNIT_ERROR_FATAL			(18)
-#define I915_PMU_SOC_ERROR_CORRECTABLE_PSF_CSC_0	(19)
-#define I915_PMU_SOC_ERROR_CORRECTABLE_PSF_CSC_1	(20)
-#define I915_PMU_SOC_ERROR_NONFATAL_PSF_CSC_0		(21)
-#define I915_PMU_SOC_ERROR_NONFATAL_PSF_CSC_1		(22)
-#define I915_PMU_SOC_ERROR_NONFATAL_PSF_CSC_2		(23)
-#define I915_PMU_SOC_ERROR_FATAL_PSF_CSC_0		(24)
-#define I915_PMU_SOC_ERROR_FATAL_PSF_CSC_1		(25)
-#define I915_PMU_SOC_ERROR_FATAL_PSF_CSC_2		(26)
-#define I915_PMU_SOC_ERROR_CORRECTABLE_PUNIT		(27)
-#define I915_PMU_SOC_ERROR_CORRECTABLE_MDFI_EAST	(28)
-#define I915_PMU_SOC_ERROR_CORRECTABLE_MDFI_WEST	(29)
-#define I915_PMU_SOC_ERROR_CORRECTABLE_MDFI_SOUTH	(30)
-#define I915_PMU_SOC_ERROR_NONFATAL_PUNIT		(31)
-#define I915_PMU_SOC_ERROR_NONFATAL_MDFI_EAST		(32)
-#define I915_PMU_SOC_ERROR_NONFATAL_MDFI_WEST		(33)
-#define I915_PMU_SOC_ERROR_NONFATAL_MDFI_SOUTH		(34)
-#define I915_PMU_SOC_ERROR_FATAL_PUNIT			(35)
-#define I915_PMU_SOC_ERROR_FATAL_MDFI_EAST		(36)
-#define I915_PMU_SOC_ERROR_FATAL_MDFI_WEST		(37)
-#define I915_PMU_SOC_ERROR_FATAL_MDFI_SOUTH		(38)
 
 #define PRELIM_I915_PMU_SOC_ERROR_CORRECTABLE_FBR(ss, n) \
 	(PRELIM_I915_PMU_SOC_ERROR_FATAL_MDFI_SOUTH + 0x1 + (ss) * 0x4 + (n))
@@ -194,24 +148,6 @@ struct prelim_i915_uevent {
 #define PRELIM_I915_PMU_SOC_ERROR_FATAL_HBM(ss, n)\
 	(PRELIM_I915_PMU_SOC_ERROR_NONFATAL_HBM(1, 16) + (ss) * 0x10 + (n))
 
-#define I915_PMU_SOC_ERROR_CORRECTABLE_FBR(ss, n)			\
-	(I915_PMU_SOC_ERROR_FATAL_MDFI_SOUTH + 0x1 + (ss) * 0x4 + (n))
-
-#define I915_PMU_SOC_ERROR_NONFATAL_FBR(ss, n) \
-	(I915_PMU_SOC_ERROR_CORRECTABLE_FBR(1, 5) + (ss) * 0x4 + (n))
-
-#define I915_PMU_SOC_ERROR_FATAL_FBR(ss, n) \
-	(I915_PMU_SOC_ERROR_NONFATAL_FBR(1, 5) + (ss) * 0x4 + (n))
-
-#define I915_PMU_SOC_ERROR_CORRECTABLE_HBM(ss, n)\
-	(I915_PMU_SOC_ERROR_FATAL_FBR(1, 5) + (ss) * 0x10 + (n))
-
-#define I915_PMU_SOC_ERROR_NONFATAL_HBM(ss, n)\
-	(I915_PMU_SOC_ERROR_CORRECTABLE_HBM(1, 16) + (ss) * 0x10 + (n))
-
-#define I915_PMU_SOC_ERROR_FATAL_HBM(ss, n)\
-	(I915_PMU_SOC_ERROR_NONFATAL_HBM(1, 16) + (ss) * 0x10 + (n))
-
 /* 161 is the last ID used by SOC errors */
 #define PRELIM_I915_PMU_GT_ERROR_FATAL_FPU		(162)
 #define PRELIM_I915_PMU_GT_ERROR_FATAL_TLB		(163)
@@ -220,11 +156,9 @@ struct prelim_i915_uevent {
 #define PRELIM_I915_PMU_HW_ERROR(gt, id) \
 	((__PRELIM_I915_PMU_HW_ERROR_EVENT_ID_OFFSET + (id)) | \
 	((__u64)(gt) << __PRELIM_I915_PMU_GT_SHIFT))
-#define I915_PMU_HW_ERROR	PRELIM_I915_PMU_HW_ERROR
 
 /* Per GT driver error counters */
 #define __PRELIM_I915_PMU_GT_DRIVER_ERROR_EVENT_ID_OFFSET (__I915_PMU_OTHER(0) + 2000)
-#define __I915_PMU_GT_DRIVER_ERROR_EVENT_ID_OFFSET (__I915_PMU_OTHER(0) + 2000)
 
 #define PRELIM_I915_PMU_GT_DRIVER_ERROR_GGTT			(0)
 #define PRELIM_I915_PMU_GT_DRIVER_ERROR_ENGINE_OTHER		(1)
@@ -232,27 +166,15 @@ struct prelim_i915_uevent {
 #define PRELIM_I915_PMU_GT_DRIVER_ERROR_RPS			(3)
 #define PRELIM_I915_PMU_GT_DRIVER_ERROR_GT_OTHER		(4)
 #define PRELIM_I915_PMU_GT_DRIVER_ERROR_INTERRUPT		(5)
-#define I915_PMU_GT_DRIVER_ERROR_GGTT			(0)
-#define I915_PMU_GT_DRIVER_ERROR_ENGINE_OTHER		(1)
-#define I915_PMU_GT_DRIVER_ERROR_GUC_COMMUNICATION	(2)
-#define I915_PMU_GT_DRIVER_ERROR_RPS			(3)
-#define I915_PMU_GT_DRIVER_ERROR_GT_OTHER		(4)
-#define I915_PMU_GT_DRIVER_ERROR_INTERRUPT		(5)
 
 #define PRELIM_I915_PMU_GT_DRIVER_ERROR(gt, id) \
 	((__PRELIM_I915_PMU_GT_DRIVER_ERROR_EVENT_ID_OFFSET + (id)) | \
 	 ((__u64)(gt) << __PRELIM_I915_PMU_GT_SHIFT))
-#define I915_PMU_GT_DRIVER_ERROR PRELIM_I915_PMU_GT_DRIVER_ERROR
 
 /* Global driver error counters */
 #define __PRELIM_I915_PMU_DRIVER_ERROR_EVENT_ID_OFFSET (__I915_PMU_OTHER(0) + 3000)
-#define __I915_PMU_DRIVER_ERROR_EVENT_ID_OFFSET (__I915_PMU_OTHER(0) + 3000)
-
 #define PRELIM_I915_PMU_DRIVER_ERROR_OBJECT_MIGRATION	(0)
-#define I915_PMU_DRIVER_ERROR_OBJECT_MIGRATION	(0)
-
 #define PRELIM_I915_PMU_DRIVER_ERROR(id)	(__PRELIM_I915_PMU_DRIVER_ERROR_EVENT_ID_OFFSET + (id))
-#define I915_PMU_DRIVER_ERROR(id)	(__I915_PMU_DRIVER_ERROR_EVENT_ID_OFFSET + (id))
 
 struct prelim_i915_user_extension {
 #define PRELIM_I915_USER_EXT		(1 << 16)
@@ -260,22 +182,9 @@ struct prelim_i915_user_extension {
 };
 
 /* PRELIM ioctl's */
-#define DRM_I915_GEM_VM_BIND		0x3c
-#define DRM_I915_GEM_VM_UNBIND		0x3d
-#define DRM_I915_GEM_VM_ADVISE		0x3e
-#define DRM_I915_GEM_WAIT_USER_FENCE	0x3f
-#define DRM_I915_GEM_VM_PREFETCH	0x40
-#define DRM_I915_UUID_REGISTER		0x41
-#define DRM_I915_UUID_UNREGISTER	0x42
-#define DRM_I915_DEBUGGER_OPEN		0x43
-#define DRM_I915_GEM_CLOS_RESERVE	0x44
-#define DRM_I915_GEM_CLOS_FREE		0x45
-#define DRM_I915_GEM_CACHE_RESERVE	0x46
-#define DRM_I915_GEM_VM_GETPARAM        DRM_I915_GEM_CONTEXT_GETPARAM
-#define DRM_I915_GEM_VM_SETPARAM        DRM_I915_GEM_CONTEXT_SETPARAM
 
 /* PRELIM ioctl numbers go down from 0x5f */
-#define PRELIM_DRM_I915_AGAMA_IOCTL_VERSION	0x5f
+#define PRELIM_DRM_I915_RESERVED_FOR_VERSION	0x5f
 /* 0x5e is free, please use if needed */
 #define PRELIM_DRM_I915_GEM_VM_BIND		0x5d
 #define PRELIM_DRM_I915_GEM_VM_UNBIND		0x5c
@@ -291,20 +200,6 @@ struct prelim_i915_user_extension {
 #define PRELIM_DRM_I915_GEM_VM_GETPARAM		DRM_I915_GEM_CONTEXT_GETPARAM
 #define PRELIM_DRM_I915_GEM_VM_SETPARAM		DRM_I915_GEM_CONTEXT_SETPARAM
 
-#define DRM_IOCTL_I915_GEM_CREATE_EXT		DRM_IOWR(DRM_COMMAND_BASE + DRM_I915_GEM_CREATE, struct prelim_drm_i915_gem_create_ext)
-#define DRM_IOCTL_I915_GEM_VM_BIND		DRM_IOWR(DRM_COMMAND_BASE + DRM_I915_GEM_VM_BIND, struct prelim_drm_i915_gem_vm_bind)
-#define DRM_IOCTL_I915_GEM_VM_UNBIND		DRM_IOWR(DRM_COMMAND_BASE + DRM_I915_GEM_VM_UNBIND, struct prelim_drm_i915_gem_vm_bind)
-#define DRM_IOCTL_I915_GEM_VM_ADVISE		DRM_IOWR(DRM_COMMAND_BASE + DRM_I915_GEM_VM_ADVISE, struct prelim_drm_i915_gem_vm_advise)
-#define DRM_IOCTL_I915_GEM_WAIT_USER_FENCE	DRM_IOWR(DRM_COMMAND_BASE + DRM_I915_GEM_WAIT_USER_FENCE, struct prelim_drm_i915_gem_wait_user_fence)
-#define DRM_IOCTL_I915_GEM_VM_PREFETCH		DRM_IOWR(DRM_COMMAND_BASE + DRM_I915_GEM_VM_PREFETCH, struct prelim_drm_i915_gem_vm_prefetch)
-#define DRM_IOCTL_I915_UUID_REGISTER		DRM_IOWR(DRM_COMMAND_BASE + DRM_I915_UUID_REGISTER, struct prelim_drm_i915_uuid_control)
-#define DRM_IOCTL_I915_UUID_UNREGISTER		DRM_IOWR(DRM_COMMAND_BASE + DRM_I915_UUID_UNREGISTER, struct prelim_drm_i915_uuid_control)
-#define DRM_IOCTL_I915_DEBUGGER_OPEN		DRM_IOWR(DRM_COMMAND_BASE + DRM_I915_DEBUGGER_OPEN, struct prelim_drm_i915_debugger_open_param)
-#define DRM_IOCTL_I915_GEM_CLOS_RESERVE		DRM_IOWR(DRM_COMMAND_BASE + DRM_I915_GEM_CLOS_RESERVE, struct prelim_drm_i915_gem_clos_reserve)
-#define DRM_IOCTL_I915_GEM_CLOS_FREE		DRM_IOWR(DRM_COMMAND_BASE + DRM_I915_GEM_CLOS_FREE, struct prelim_drm_i915_gem_clos_free)
-#define DRM_IOCTL_I915_GEM_CACHE_RESERVE	DRM_IOWR(DRM_COMMAND_BASE + DRM_I915_GEM_CACHE_RESERVE, struct prelim_drm_i915_gem_cache_reserve)
-#define DRM_IOCTL_I915_GEM_VM_GETPARAM		DRM_IOWR(DRM_COMMAND_BASE + DRM_I915_GEM_VM_GETPARAM, struct prelim_drm_i915_gem_vm_param)
-#define DRM_IOCTL_I915_GEM_VM_SETPARAM		DRM_IOWR(DRM_COMMAND_BASE + DRM_I915_GEM_VM_SETPARAM, struct prelim_drm_i915_gem_vm_param)
 
 #define PRELIM_DRM_IOCTL_I915_GEM_CREATE_EXT		DRM_IOWR(DRM_COMMAND_BASE + DRM_I915_GEM_CREATE, struct prelim_drm_i915_gem_create_ext)
 #define PRELIM_DRM_IOCTL_I915_GEM_VM_BIND		DRM_IOWR(DRM_COMMAND_BASE + PRELIM_DRM_I915_GEM_VM_BIND, struct prelim_drm_i915_gem_vm_bind)
@@ -331,19 +226,15 @@ struct prelim_i915_user_extension {
  * 64 engines should be assumed.
  */
 #define PRELIM_I915_PARAM_EXECBUF2_MAX_ENGINE	(PRELIM_I915_PARAM | 1)
-#define I915_PARAM_EXECBUF2_MAX_ENGINE	55
 
 /* Total local memory in bytes */
 #define PRELIM_I915_PARAM_LMEM_TOTAL_BYTES	(PRELIM_I915_PARAM | 2)
-#define I915_PARAM_LMEM_TOTAL_BYTES	56
 
 /* Available local memory in bytes */
 #define PRELIM_I915_PARAM_LMEM_AVAIL_BYTES	(PRELIM_I915_PARAM | 3)
-#define I915_PARAM_LMEM_AVAIL_BYTES	57
 
 /* Shared Virtual Memory (SVM) support capability */
 #define PRELIM_I915_PARAM_HAS_SVM		(PRELIM_I915_PARAM | 4)
-#define I915_PARAM_HAS_SVM		58
 
 /*
  * Frequency of the timestamps in OA reports. This used to be the same as the CS
@@ -353,7 +244,6 @@ struct prelim_i915_user_extension {
 
 /* VM_BIND feature availability */
 #define PRELIM_I915_PARAM_HAS_VM_BIND	(PRELIM_I915_PARAM | 6)
-#define I915_PARAM_HAS_VM_BIND		59
 /* End getparam */
 
 struct prelim_drm_i915_gem_create_ext {
@@ -374,12 +264,8 @@ struct prelim_drm_i915_gem_create_ext {
 #define PRELIM_I915_GEM_CREATE_EXT_SETPARAM	(PRELIM_I915_USER_EXT | 1)
 #define PRELIM_I915_GEM_CREATE_EXT_FLAGS_UNKNOWN \
 	(~PRELIM_I915_GEM_CREATE_EXT_SETPARAM)
-#define I915_GEM_CREATE_EXT_SETPARAM (1u << 0)
-#define I915_GEM_CREATE_EXT_FLAGS_UNKNOWN \
-	(-(I915_GEM_CREATE_EXT_SETPARAM << 1))
 	__u64 extensions;
 };
-#define drm_i915_gem_create_ext prelim_drm_i915_gem_create_ext
 
 struct prelim_drm_i915_gem_object_param {
 	/* Object handle (0 for I915_GEM_CREATE_EXT_SETPARAM) */
@@ -394,7 +280,6 @@ struct prelim_drm_i915_gem_object_param {
  * Select object namespace for the param.
  */
 #define PRELIM_I915_OBJECT_PARAM  (1ull << 48)
-#define I915_OBJECT_PARAM  (1ull<<32)
 
 /*
  * PRELIM_I915_PARAM_MEMORY_REGIONS:
@@ -409,19 +294,16 @@ struct prelim_drm_i915_gem_object_param {
  *	.param = PRELIM_I915_OBJECT_PARAM | PRELIM_I915_PARAM_MEMORY_REGIONS
  */
 #define PRELIM_I915_PARAM_MEMORY_REGIONS ((1 << 16) | 0x1)
-#define I915_PARAM_MEMORY_REGIONS 0x1
 	__u64 param;
 
 	/* Data value or pointer */
 	__u64 data;
 };
-#define drm_i915_gem_object_param prelim_drm_i915_gem_object_param
 
 struct prelim_drm_i915_gem_create_ext_setparam {
 	struct i915_user_extension base;
 	struct prelim_drm_i915_gem_object_param param;
 };
-#define drm_i915_gem_create_ext_setparam prelim_drm_i915_gem_create_ext_setparam
 
 #define PRELIM_PERF_VERSION	(1000)
 
@@ -431,7 +313,6 @@ struct prelim_drm_i915_gem_create_ext_setparam {
  * This ioctl is available in perf revision 1000.
  */
 #define PRELIM_I915_PERF_IOCTL_GET_OA_BUFFER_INFO _IOWR('i', 0x80, struct prelim_drm_i915_perf_oa_buffer_info)
-#define I915_PERF_IOCTL_GET_OA_BUFFER_INFO _IOWR('i', 0x3, struct prelim_drm_i915_perf_oa_buffer_info)
 
 /**
  * OA buffer size and offset.
@@ -458,7 +339,6 @@ struct prelim_drm_i915_perf_oa_buffer_info {
 	__u64 offset; /* out */
 	__u64 rsvd;   /* mbz */
 };
-#define drm_i915_perf_oa_buffer_info prelim_drm_i915_perf_oa_buffer_info
 
 enum prelim_drm_i915_eu_stall_property_id {
 	/**
@@ -483,6 +363,10 @@ enum prelim_drm_i915_eu_stall_property_id {
 	 */
 	PRELIM_DRM_I915_EU_STALL_PROP_POLL_PERIOD,
 
+	PRELIM_DRM_I915_EU_STALL_PROP_ENGINE_CLASS,
+
+	PRELIM_DRM_I915_EU_STALL_PROP_ENGINE_INSTANCE,
+
 	PRELIM_DRM_I915_EU_STALL_PROP_MAX
 };
 
@@ -505,33 +389,27 @@ struct prelim_drm_i915_gem_memory_class_instance {
 	__u16 memory_class; /* see enum prelim_drm_i915_gem_memory_class */
 	__u16 memory_instance;
 };
-#define drm_i915_gem_memory_class_instance prelim_drm_i915_gem_memory_class_instance
 
 struct prelim_drm_i915_query_item {
 #define PRELIM_DRM_I915_QUERY			(1 << 16)
 #define PRELIM_DRM_I915_QUERY_MASK(x)		(x & 0xffff)
 /* Keep lower 16 bits same as previous values */
 #define PRELIM_DRM_I915_QUERY_MEMORY_REGIONS	(PRELIM_DRM_I915_QUERY | 4)
-#define DRM_I915_QUERY_MEMORY_REGIONS   4
 #define PRELIM_DRM_I915_QUERY_DISTANCE_INFO	(PRELIM_DRM_I915_QUERY | 5)
-#define DRM_I915_QUERY_DISTANCE_INFO	5
 	/**
 	 * Query HWConfig Table: Copies a device information table to the
 	 * query's item.data_ptr directly if the allocated length is big enough
 	 * For details about table format and content see intel_hwconfig_types.h
 	 */
 #define PRELIM_DRM_I915_QUERY_HWCONFIG_TABLE	(PRELIM_DRM_I915_QUERY | 6)
-#define DRM_I915_QUERY_HWCONFIG_TABLE	6
 #define PRELIM_DRM_I915_QUERY_GEOMETRY_SLICES	(PRELIM_DRM_I915_QUERY | 7)
 #define PRELIM_DRM_I915_QUERY_COMPUTE_SLICES	(PRELIM_DRM_I915_QUERY | 8)
 	/**
 	 * Query Command Streamer timestamp register.
 	 */
 #define PRELIM_DRM_I915_QUERY_CS_CYCLES		(PRELIM_DRM_I915_QUERY | 9)
-#define DRM_I915_QUERY_CS_CYCLES	9
 
 #define PRELIM_DRM_I915_QUERY_FABRIC_INFO	(PRELIM_DRM_I915_QUERY | 11)
-#define DRM_I915_QUERY_FABRIC_INFO	11
 
 #define PRELIM_DRM_I915_QUERY_ENGINE_INFO	(PRELIM_DRM_I915_QUERY | 13)
 #define PRELIM_DRM_I915_QUERY_L3_BANK_COUNT	(PRELIM_DRM_I915_QUERY | 14)
@@ -547,10 +425,6 @@ struct prelim_drm_i915_query_item {
  * I915_PARALLEL_BB_PREEMPT_BOUNDARY and the number BBs not equal to the total
  * number hardware contexts in the gem context.
  */
-#define I915_EXEC_NUMBER_BB_LSB		(21)
-#define I915_EXEC_NUMBER_BB_MASK	(0x3f << I915_EXEC_NUMBER_BB_LSB)
-#define I915_EXEC_NUMBER_BB_MSB		(26)
-#define I915_EXEC_NUMBER_BB_MASK_MSB	(1 << I915_EXEC_NUMBER_BB_MSB)
 #define PRELIM_I915_EXEC_NUMBER_BB_LSB		(48)
 #define PRELIM_I915_EXEC_NUMBER_BB_MASK		(0x3full << PRELIM_I915_EXEC_NUMBER_BB_LSB)
 #define PRELIM_I915_EXEC_NUMBER_BB_MSB		(54)
@@ -572,10 +446,8 @@ struct prelim_drm_i915_query_item {
  */
 #define PRELIM_I915_EXEC_ENGINE_MASK    (0xff)
 #define PRELIM_I915_EXEC_ENGINE_MASK_SELECT (1ull << 55)
-#define I915_EXEC_ENGINE_MASK    (0xff)
-#define I915_EXEC_ENGINE_MASK_SELECT (1 << 27)
 
-#define __I915_EXEC_UNKNOWN_FLAGS (~(GENMASK_ULL(55, 48) | GENMASK_ULL(27, 0)))
+#define __I915_EXEC_UNKNOWN_FLAGS (~(GENMASK_ULL(55, 48) | GENMASK_ULL(21, 0)))
 
 /*
  * Indicates the 2k user priority levels are statically mapped into 3 buckets as
@@ -586,7 +458,6 @@ struct prelim_drm_i915_query_item {
  * 1 to 1k	Highest priority
  */
 #define   PRELIM_I915_SCHEDULER_CAP_STATIC_PRIORITY_MAP	(1ul << 31)
-#define   I915_SCHEDULER_CAP_STATIC_PRIORITY_MAP	(1ul << 5)
 
 enum prelim_drm_i915_gem_engine_class {
 #define	PRELIM_I915_ENGINE_CLASS		(1 << 8)
@@ -733,7 +604,6 @@ struct prelim_i915_context_engines_parallel_submit {
  * bonding configurations.
  */
 #define PRELIM_I915_PARALLEL_IMPLICT_BONDS	(1ull << 63)
-#define I915_PARALLEL_IMPLICT_BONDS	(1<<0)
 /*
  * Do not allow BBs to be preempted mid BB rather insert coordinated preemption
  * points on all hardware contexts between each BB. An example use case of this
@@ -742,13 +612,10 @@ struct prelim_i915_context_engines_parallel_submit {
  * The execbuf2 IOCTL enforces the user adheres to policy.
  */
 #define PRELIM_I915_PARALLEL_BATCH_PREEMPT_BOUNDARY	(1ull << 62)
-#define I915_PARALLEL_BATCH_PREEMPT_BOUNDARY	(1<<1)
-#define __I915_PARALLEL_UNKNOWN_FLAGS	(-(I915_PARALLEL_BATCH_PREEMPT_BOUNDARY << 1))
-#define __PRELIM_I915_PARALLEL_UNKNOWN_FLAGS (~(GENMASK_ULL(63, 62) | GENMASK_ULL(1, 0)))
+#define __PRELIM_I915_PARALLEL_UNKNOWN_FLAGS		(~GENMASK_ULL(63, 62))
 	__u64 flags; /* all undefined flags must be zero */
 	__u64 mbz64[4]; /* reserved for future use; must be zero */
 } __attribute__ ((packed));
-#define i915_context_engines_parallel_submit prelim_i915_context_engines_parallel_submit
 
 /**
  * struct prelim_drm_i915_context_engines_parallel2_submit - Configure engine
@@ -866,27 +733,11 @@ struct prelim_drm_i915_context_engines_parallel2_submit {
 
 struct prelim_i915_context_param_engines {
 #define PRELIM_I915_CONTEXT_ENGINES_EXT_PARALLEL_SUBMIT (PRELIM_I915_USER_EXT | 2) /* see prelim_i915_context_engines_parallel_submit */
-#define I915_CONTEXT_ENGINES_EXT_PARALLEL_SUBMIT 2 /* see i915_context_engines_parallel_submit */
 #define PRELIM_I915_CONTEXT_ENGINES_EXT_PARALLEL2_SUBMIT (PRELIM_I915_USER_EXT | 3) /* see prelim_i915_context_engines_parallel2_submit */
 };
 
+/* PRELIM OA formats */
 enum prelim_drm_i915_oa_format {
-	/* Values continue from enum drm_i915_oa_format */
-	/* XEHPSDV */
-	I915_OAR_FORMAT_A32u40_A4u32_B8_C8 = 11,
-	I915_OA_FORMAT_A24u40_A14u32_B8_C8,
-	I915_OAM_FORMAT_A2u64_B8_C8,
-
-	/* DG2 */
-	I915_OAR_FORMAT_A36u64_B8_C8,
-	I915_OAC_FORMAT_A24u64_B8_C8,
-	I915_OA_FORMAT_A38u64_R2u64_B8_C8,
-	I915_OAM_FORMAT_A2u64_R2u64_B8_C8,
-
-	/* Move to 'enum drm_i915_oa_format' after switch to PRELIM uapi */
-	I915_OA_FORMAT_MAX,		/* non-ABI */
-
-	/* Start of PRELIM formats */
 	PRELIM_I915_OA_FORMAT_START = 128,
 
 	/* XEHPSDV */
@@ -945,14 +796,9 @@ struct prelim_drm_i915_gem_context_param_acc {
 #define   PRELIM_I915_CONTEXT_ACG_2M        1
 #define   PRELIM_I915_CONTEXT_ACG_16M       2
 #define   PRELIM_I915_CONTEXT_ACG_64M       3
-#define   I915_CONTEXT_ACG_128K      0
-#define   I915_CONTEXT_ACG_2M        1
-#define   I915_CONTEXT_ACG_16M       2
-#define   I915_CONTEXT_ACG_64M       3
 		__u8 pad1;
 		__u16 pad2;
 };
-#define drm_i915_gem_context_param_acc prelim_drm_i915_gem_context_param_acc
 
 struct prelim_drm_i915_gem_context_param {
 /*
@@ -967,7 +813,6 @@ struct prelim_drm_i915_gem_context_param {
  */
 #define PRELIM_I915_CONTEXT_PARAM		(1 << 16)
 #define PRELIM_I915_CONTEXT_PARAM_DEBUG_FLAGS	(PRELIM_I915_CONTEXT_PARAM | 0xfd)
-#define I915_CONTEXT_PARAM_DEBUG_FLAGS	0xfd /* temporary */
 
 /*
  * Notify driver that SIP is provided with the pipeline setup.
@@ -977,7 +822,6 @@ struct prelim_drm_i915_gem_context_param {
  *
  */
 #define PRELIM_I915_CONTEXT_PARAM_DEBUG_FLAG_SIP	(1ull << 0)
-#define I915_CONTEXT_PARAM_DEBUG_FLAG_SIP    (1ull << 0)
 
 /*
  *  PRELIM_I915_CONTEXT_PARAM_ACC:
@@ -987,13 +831,11 @@ struct prelim_drm_i915_gem_context_param {
  *  By default: access counter feature is disabled.
  */
 #define PRELIM_I915_CONTEXT_PARAM_ACC		(PRELIM_I915_CONTEXT_PARAM | 0xd)
-#define I915_CONTEXT_PARAM_ACC    0xd
 };
 
 struct prelim_drm_i915_gem_context_create_ext {
 #define PRELIM_I915_CONTEXT_CREATE_FLAGS_ULLS		(1u << 31)
-#define I915_CONTEXT_CREATE_FLAGS_ULLS			(1u << 2)
-#define I915_CONTEXT_CREATE_FLAGS_UNKNOWN (~(GENMASK(31, 31) | GENMASK(2, 0)))
+#define I915_CONTEXT_CREATE_FLAGS_UNKNOWN (~(GENMASK(31, 31) | GENMASK(1, 0)))
 };
 
 /*
@@ -1003,18 +845,8 @@ struct prelim_drm_i915_gem_context_create_ext {
  */
 #define PRELIM_I915_CONTEXT_PARAM_RUNALONE      (PRELIM_I915_CONTEXT_PARAM | 0xf)
 
+/* Downstream PRELIM properties */
 enum prelim_drm_i915_perf_property_id {
-	/* Values continue from enum drm_i915_perf_property_id */
-	DRM_I915_PERF_PROP_OA_BUFFER_SIZE = 9,
-
-	DRM_I915_PERF_PROP_OA_ENGINE_CLASS,
-
-	DRM_I915_PERF_PROP_OA_ENGINE_INSTANCE,
-
-	/* Move to 'enum drm_i915_perf_property_id' after switch to PRELIM uapi */
-	DRM_I915_PERF_PROP_MAX, /* non-ABI */
-
-	/* Downstream PRELIM properties */
 	PRELIM_DRM_I915_PERF_PROP = (1 << 16),
 
 	/**
@@ -1048,12 +880,8 @@ enum prelim_drm_i915_perf_property_id {
 
 	PRELIM_DRM_I915_PERF_PROP_LAST,
 
-	/*
-	 * After switch to PRELIM uapi this would be:
-	 * PRELIM_DRM_I915_PERF_PROP_MAX = DRM_I915_PERF_PROP_MAX +
-	 *				(PRELIM_DRM_I915_PERF_PROP_LAST & 0xffff)
-	 */
-	PRELIM_DRM_I915_PERF_PROP_MAX = DRM_I915_PERF_PROP_MAX,
+	PRELIM_DRM_I915_PERF_PROP_MAX = DRM_I915_PERF_PROP_MAX - 1 + \
+					(PRELIM_DRM_I915_PERF_PROP_LAST & 0xffff)
 };
 
 struct prelim_drm_i915_uuid_control {
@@ -1078,19 +906,16 @@ struct prelim_drm_i915_uuid_control {
 	__u64 size;	/* Length of the payload in bytes */
 
 #define PRELIM_I915_UUID_CLASS_STRING	((__u32)-1)
-#define I915_UUID_CLASS_STRING	((__u32)-1)
 /*
  * d9900de4-be09-56ab-84a5-dfc280f52ee5 =
  *                          sha1(“I915_UUID_CLASS_STRING”)[0..35]
  */
 #define PRELIM_I915_UUID_CLASS_MAX_RESERVED ((__u32)-1024)
-#define I915_UUID_CLASS_MAX_RESERVED ((__u32)-1024)
 
 	__u32 handle; /* Output: Registered handle ID */
 
 	__u64 extensions; /* MBZ */
 };
-#define drm_i915_uuid_control prelim_drm_i915_uuid_control
 
 /*
  * struct prelim_drm_i915_vm_bind_ext_uuid
@@ -1099,11 +924,9 @@ struct prelim_drm_i915_uuid_control {
  */
 struct prelim_drm_i915_vm_bind_ext_uuid {
 #define PRELIM_I915_VM_BIND_EXT_UUID	(PRELIM_I915_USER_EXT | 1)
-#define I915_VM_BIND_EXT_UUID     1
 	struct i915_user_extension base;
 	__u32 uuid_handle; /* Handle to the registered UUID resource. */
 };
-#define drm_i915_vm_bind_ext_uuid prelim_drm_i915_vm_bind_ext_uuid
 
 /**
  * Do a debug event read for a debugger connection.
@@ -1111,9 +934,7 @@ struct prelim_drm_i915_vm_bind_ext_uuid {
  * This ioctl is available in debug version 1.
  */
 #define PRELIM_I915_DEBUG_IOCTL_READ_EVENT _IO('j', 0x0)
-#define I915_DEBUG_IOCTL_READ_EVENT _IO('i', 0x0)
 #define PRELIM_I915_DEBUG_IOCTL_READ_UUID  _IOWR('j', 0x1, struct prelim_drm_i915_debug_read_uuid)
-#define I915_DEBUG_IOCTL_READ_UUID  _IOWR('i', 0x1, struct drm_i915_debug_read_uuid)
 #define PRELIM_I915_DEBUG_IOCTL_VM_OPEN  _IOW('j', 0x2, struct prelim_drm_i915_debug_vm_open)
 #define PRELIM_I915_DEBUG_IOCTL_EU_CONTROL _IOWR('j', 0x3, struct prelim_drm_i915_debug_eu_control)
 #define PRELIM_I915_DEBUG_IOCTL_ACK_EVENT _IOW('j', 0x4, struct prelim_drm_i915_debug_event_ack)
@@ -1130,11 +951,6 @@ struct prelim_drm_i915_debug_event {
 #define PRELIM_DRM_I915_DEBUG_EVENT_CONTEXT_PARAM 7
 #define PRELIM_DRM_I915_DEBUG_EVENT_EU_ATTENTION 8
 #define PRELIM_DRM_I915_DEBUG_EVENT_ENGINES 9
-#define DRM_I915_DEBUG_EVENT_NONE     0
-#define DRM_I915_DEBUG_EVENT_READ     1
-#define DRM_I915_DEBUG_EVENT_CLIENT   2
-#define DRM_I915_DEBUG_EVENT_CONTEXT  3
-#define DRM_I915_DEBUG_EVENT_UUID     4
 #define PRELIM_DRM_I915_DEBUG_EVENT_MAX_EVENT PRELIM_DRM_I915_DEBUG_EVENT_ENGINES
 
 	__u32 flags;
@@ -1142,21 +958,15 @@ struct prelim_drm_i915_debug_event {
 #define PRELIM_DRM_I915_DEBUG_EVENT_DESTROY	(1 << 30)
 #define PRELIM_DRM_I915_DEBUG_EVENT_STATE_CHANGE (1 << 29)
 #define PRELIM_DRM_I915_DEBUG_EVENT_NEED_ACK	(1 << 28)
-#define DRM_I915_DEBUG_EVENT_CREATE	(1 << 0)
-#define DRM_I915_DEBUG_EVENT_DESTROY	(1 << 1)
-#define DRM_I915_DEBUG_EVENT_STATE_CHANGE (1 << 2)
-#define DRM_I915_DEBUG_EVENT_NEED_ACK	(1 << 3)
 	__u64 seqno;
 	__u64 size;
 } __attribute__((packed));
-#define drm_i915_debug_event prelim_drm_i915_debug_event
 
 struct prelim_drm_i915_debug_event_client {
 	struct prelim_drm_i915_debug_event base; /* .flags = CREATE/DESTROY */
 
 	__u64 handle; /* This is unique per debug connection */
 } __attribute__((packed));
-#define drm_i915_debug_event_client prelim_drm_i915_debug_event_client
 
 struct prelim_drm_i915_debug_event_context {
 	struct prelim_drm_i915_debug_event base;
@@ -1164,19 +974,16 @@ struct prelim_drm_i915_debug_event_context {
 	__u64 client_handle;
 	__u64 handle;
 } __attribute__((packed));
-#define drm_i915_debug_event_context prelim_drm_i915_debug_event_context
 
 struct prelim_drm_i915_debugger_open_param {
 	__u64 pid; /* input: Target process ID */
 	__u32 flags;
 #define PRELIM_DRM_I915_DEBUG_FLAG_FD_NONBLOCK	(1u << 31)
-#define DRM_I915_DEBUG_FLAG_FD_NONBLOCK (1u << 0)
 
 	__u32 version;
 	__u64 events;  /* input: event types to subscribe to */
 	__u64 extensions; /* MBZ */
 };
-#define drm_i915_debugger_open_param prelim_drm_i915_debugger_open_param
 
 struct prelim_drm_i915_debug_event_uuid {
 	struct prelim_drm_i915_debug_event base;
@@ -1186,17 +993,16 @@ struct prelim_drm_i915_debug_event_uuid {
 	__u64 class_handle; /* Can be filtered based on pre-defined classes */
 	__u64 payload_size;
 } __attribute__((packed));
-#define drm_i915_debug_event_uuid prelim_drm_i915_debug_event_uuid
 
 struct prelim_drm_i915_debug_event_vm {
-	struct drm_i915_debug_event base;
+	struct prelim_drm_i915_debug_event base;
 	__u64 client_handle;
 
 	__u64 handle;
 } __attribute__((packed));
 
 struct prelim_drm_i915_debug_event_vm_bind {
-	struct drm_i915_debug_event base;
+	struct prelim_drm_i915_debug_event base;
 	__u64 client_handle;
 
 	__u64 vm_handle;
@@ -1242,7 +1048,6 @@ struct prelim_drm_i915_debug_read_uuid {
 	__u64 payload_ptr;
 	__u64 payload_size;
 } __attribute__((packed));
-#define drm_i915_debug_read_uuid prelim_drm_i915_debug_read_uuid
 
 struct prelim_drm_i915_debug_event_context_param {
 	struct prelim_drm_i915_debug_event base;
@@ -1250,7 +1055,6 @@ struct prelim_drm_i915_debug_event_context_param {
 	__u64 ctx_handle;
 	struct drm_i915_gem_context_param param;
 } __attribute__((packed));
-#define drm_i915_debug_event_context_param prelim_drm_i915_debug_event_context_param
 
 struct prelim_drm_i915_debug_engine_info {
 	struct i915_engine_class_instance engine;
@@ -1313,12 +1117,6 @@ enum prelim_drm_i915_gem_memory_class {
 	PRELIM_I915_MEMORY_CLASS_NONE = -1
 };
 
-enum drm_i915_gem_memory_class {
-	I915_MEMORY_CLASS_SYSTEM = 0,
-	I915_MEMORY_CLASS_DEVICE,
-	I915_MEMORY_CLASS_NONE = -1
-};
-
 /**
  * struct prelim_drm_i915_memory_region_info
  *
@@ -1346,7 +1144,6 @@ struct prelim_drm_i915_memory_region_info {
 	/** MBZ */
 	__u64 rsvd1[8];
 };
-#define drm_i915_memory_region_info prelim_drm_i915_memory_region_info
 
 /**
  * struct prelim_drm_i915_query_memory_regions
@@ -1364,7 +1161,6 @@ struct prelim_drm_i915_query_memory_regions {
 	/* Info about each supported region */
 	struct prelim_drm_i915_memory_region_info regions[];
 };
-#define drm_i915_query_memory_regions prelim_drm_i915_query_memory_regions
 
 /**
  * struct prelim_drm_i915_query_distance_info
@@ -1386,7 +1182,6 @@ struct prelim_drm_i915_query_distance_info {
 	/** Must be zero */
 	__u32 rsvd[3];
 };
-#define drm_i915_query_distance_info prelim_drm_i915_query_distance_info
 
 /**
  * struct prelim_drm_i915_query_cs_cycles
@@ -1426,7 +1221,6 @@ struct prelim_drm_i915_query_cs_cycles {
 	/** Must be zero. */
 	__u32 rsvd;
 };
-#define drm_i915_query_cs_cycles prelim_drm_i915_query_cs_cycles
 
 /**
  * struct prelim_drm_i915_query_fabric_info
@@ -1449,7 +1243,6 @@ struct prelim_drm_i915_query_fabric_info {
 	__u16 bandwidth;
 	__u16 latency;
 };
-#define drm_i915_query_fabric_info prelim_drm_i915_query_fabric_info
 
 /**
  * struct prelim_drm_i915_engine_info
@@ -1471,21 +1264,17 @@ struct prelim_drm_i915_engine_info {
 	/** Engine flags. */
 	__u64 flags;
 #define PRELIM_I915_ENGINE_INFO_HAS_KNOWN_CAPABILITIES	(1ull << 63)
-#define I915_ENGINE_INFO_HAS_KNOWN_CAPABILITIES		(1 << 0)
 #define PRELIM_I915_ENGINE_INFO_HAS_LOGICAL_INSTANCE	(1ull << 62)
-#define I915_ENGINE_INFO_HAS_LOGICAL_INSTANCE		(1 << 1)
 #define PRELIM_I915_ENGINE_INFO_HAS_OA_UNIT_ID		(1ull << 61)
 
 	/** Capabilities of this engine. */
 	__u64 capabilities;
 #define PRELIM_I915_RENDER_CLASS_CAPABILITY_3D		(1ull << 63)
-#define I915_RENDER_CLASS_CAPABILITY_3D			(1 << 0)
 #define I915_VIDEO_CLASS_CAPABILITY_HEVC		(1 << 0)
 #define I915_VIDEO_AND_ENHANCE_CLASS_CAPABILITY_SFC	(1 << 1)
 #define PRELIM_I915_VIDEO_CLASS_CAPABILITY_VDENC	(1ull << 63)
 #define I915_VIDEO_CLASS_CAPABILITY_VDENC		(1 << 2)
 #define PRELIM_I915_COPY_CLASS_CAP_BLOCK_COPY		(1ull << 63)
-#define I915_COPY_CLASS_CAP_BLOCK_COPY			(1 << 0)
 	/*
 	 * The following are capabilties of the copy engines, while all engines
 	 * are functionally same, but engines with cap PRELIM_I915_COPY_CLASS_CAP_SATURATE_LINK
@@ -1494,11 +1283,8 @@ struct prelim_drm_i915_engine_info {
 	 * PRELIM_I915_COPY_CLASS_CAP_SATURATE_LMEM can operate at HBM speeds.
 	 */
 #define PRELIM_I915_COPY_CLASS_CAP_SATURATE_PCIE	(1ull << 62)
-#define I915_COPY_CLASS_CAP_SATURATE_PCIE		(1 << 1)
 #define PRELIM_I915_COPY_CLASS_CAP_SATURATE_LINK	(1ull << 61)
-#define I915_COPY_CLASS_CAP_SATURATE_LINK		(1 << 2)
 #define PRELIM_I915_COPY_CLASS_CAP_SATURATE_LMEM	(1ull << 60)
-#define I915_COPY_CLASS_CAP_SATURATE_LMEM		(1 << 3)
 
 	/** All known capabilities for this engine class. */
 	__u64 known_capabilities;
@@ -1561,16 +1347,11 @@ struct prelim_drm_i915_gem_vm_bind {
 	__u64 flags;
 #define PRELIM_I915_GEM_VM_BIND_IMMEDIATE	(1ull << 63)
 #define PRELIM_I915_GEM_VM_BIND_READONLY	(1ull << 62)
-#define I915_GEM_VM_BIND_IMMEDIATE   (1 << 0)
-#define I915_GEM_VM_BIND_READONLY    (1 << 1)
 #define PRELIM_I915_GEM_VM_BIND_CAPTURE		(1ull << 61)
-#define I915_GEM_VM_BIND_CAPTURE     (1 << 2)
 #define PRELIM_I915_GEM_VM_BIND_FD		(1ull << 60)
-#define I915_GEM_VM_BIND_FD          (1 << 3)
 
 	__u64 extensions;
 };
-#define drm_i915_gem_vm_bind prelim_drm_i915_gem_vm_bind
 
 /**
  * struct prelim_drm_i915_gem_vm_advise
@@ -1622,18 +1403,13 @@ struct prelim_drm_i915_gem_vm_advise {
 #define PRELIM_I915_VM_ADVISE_ATOMIC_NONE		(PRELIM_I915_VM_ADVISE | 0)
 #define PRELIM_I915_VM_ADVISE_ATOMIC_SYSTEM		(PRELIM_I915_VM_ADVISE | 1)
 #define PRELIM_I915_VM_ADVISE_ATOMIC_DEVICE		(PRELIM_I915_VM_ADVISE | 2)
-#define I915_VM_ADVISE_ATOMIC_NONE		0
-#define I915_VM_ADVISE_ATOMIC_SYSTEM		1
-#define I915_VM_ADVISE_ATOMIC_DEVICE		2
 #define PRELIM_I915_VM_ADVISE_PREFERRED_LOCATION	(PRELIM_I915_VM_ADVISE | 3)
-#define I915_VM_ADVISE_PREFERRED_LOCATION	3
 
 	/** Preferred location (memory region) for object backing */
 	struct prelim_drm_i915_gem_memory_class_instance region;
 
 	__u32 rsvd[2];
 };
-#define drm_i915_gem_vm_advise prelim_drm_i915_gem_vm_advise
 
 /**
  * struct prelim_drm_i915_gem_wait_user_fence
@@ -1661,65 +1437,44 @@ struct prelim_drm_i915_gem_wait_user_fence {
 #define PRELIM_I915_UFENCE_WAIT_LTE	(PRELIM_I915_UFENCE | 5)
 #define PRELIM_I915_UFENCE_WAIT_BEFORE	(PRELIM_I915_UFENCE | 6)
 #define PRELIM_I915_UFENCE_WAIT_AFTER	(PRELIM_I915_UFENCE | 7)
-#define I915_UFENCE_WAIT_EQ      0
-#define I915_UFENCE_WAIT_NEQ     1
-#define I915_UFENCE_WAIT_GT      2
-#define I915_UFENCE_WAIT_GTE     3
-#define I915_UFENCE_WAIT_LT      4
-#define I915_UFENCE_WAIT_LTE     5
-#define I915_UFENCE_WAIT_BEFORE  6
-#define I915_UFENCE_WAIT_AFTER   7
 	__u16 flags;
 #define PRELIM_I915_UFENCE_WAIT_SOFT	(1 << 15)
 #define PRELIM_I915_UFENCE_WAIT_ABSTIME	(1 << 14)
-#define I915_UFENCE_WAIT_SOFT    0x1
-#define I915_UFENCE_WAIT_ABSTIME 0x2
 	__u64 value;
 	__u64 mask;
 #define PRELIM_I915_UFENCE_WAIT_U8     0xffu
 #define PRELIM_I915_UFENCE_WAIT_U16    0xffffu
 #define PRELIM_I915_UFENCE_WAIT_U32    0xfffffffful
 #define PRELIM_I915_UFENCE_WAIT_U64    0xffffffffffffffffull
-#define I915_UFENCE_WAIT_U8     0xffu
-#define I915_UFENCE_WAIT_U16    0xffffu
-#define I915_UFENCE_WAIT_U32    0xfffffffful
-#define I915_UFENCE_WAIT_U64    0xffffffffffffffffull
 	__s64 timeout;
 };
-#define drm_i915_gem_wait_user_fence prelim_drm_i915_gem_wait_user_fence
 
 struct prelim_drm_i915_vm_bind_ext_sync_fence {
 #define PRELIM_I915_VM_BIND_EXT_SYNC_FENCE     (PRELIM_I915_USER_EXT | 0)
-#define I915_VM_BIND_EXT_SYNC_FENCE     0
 	struct i915_user_extension base;
 	__u64 addr;
 	__u64 val;
 };
-#define drm_i915_vm_bind_ext_sync_fence prelim_drm_i915_vm_bind_ext_sync_fence
 
 struct prelim_drm_i915_gem_vm_region_ext {
 #define PRELIM_I915_GEM_VM_CONTROL_EXT_REGION	(PRELIM_I915_USER_EXT | 0)
-#define I915_GEM_VM_CONTROL_EXT_REGION 0
 	struct i915_user_extension base;
 	/* memory region: to find gt to create vm on */
 	struct prelim_drm_i915_gem_memory_class_instance region;
 	__u32 pad;
 };
-#define drm_i915_gem_vm_region_ext prelim_drm_i915_gem_vm_region_ext
 
 struct prelim_drm_i915_gem_vm_control {
+/* FIXME: this is uabi for now but should be just (1 << 16) */
 #define PRELIM_I915_VM_CREATE_FLAGS_DISABLE_SCRATCH	((1 << 16) | 1)
-#define I915_VM_CREATE_FLAGS_DISABLE_SCRATCH	(1u << 0)
 #define PRELIM_I915_VM_CREATE_FLAGS_UNKNOWN (~(GENMASK(16, 16) | GENMASK(0, 0)))
 };
 
 struct prelim_drm_i915_vm_bind_ext_set_pat {
 #define PRELIM_I915_VM_BIND_EXT_SET_PAT	(PRELIM_I915_USER_EXT | 2)
-#define I915_VM_BIND_EXT_SET_PAT       2
        struct i915_user_extension base;
        __u64 pat_index;
 };
-#define drm_i915_vm_bind_ext_set_pat prelim_drm_i915_vm_bind_ext_set_pat
 
 /**
  * struct prelim_drm_i915_gem_clos_reserve
@@ -1732,7 +1487,6 @@ struct prelim_drm_i915_gem_clos_reserve {
 	__u16 clos_index;
 	__u16 pad16;
 };
-#define drm_i915_gem_clos_reserve prelim_drm_i915_gem_clos_reserve
 
 /**
  * struct prelim_drm_i915_gem_clos_free
@@ -1749,7 +1503,6 @@ struct prelim_drm_i915_gem_clos_free {
 	__u16 clos_index;
 	__u16 pad16;
 };
-#define drm_i915_gem_clos_free prelim_drm_i915_gem_clos_free
 
 /**
  * struct prelim_drm_i915_gem_cache_reserve
@@ -1772,7 +1525,6 @@ struct prelim_drm_i915_gem_cache_reserve {
 	__u16 num_ways;
 	__u16 pad16;
 };
-#define drm_i915_gem_cache_reserve prelim_drm_i915_gem_cache_reserve
 
 /**
  * struct prelim_drm_i915_gem_vm_prefetch
@@ -1792,20 +1544,16 @@ struct prelim_drm_i915_gem_vm_prefetch {
 	/** VA length to prefetch **/
 	__u64 length;
 };
-#define drm_i915_gem_vm_prefetch prelim_drm_i915_gem_vm_prefetch
 
 struct prelim_drm_i915_gem_vm_param {
 	__u32 vm_id;
 	__u32 rsvd;
 
 #define PRELIM_I915_VM_PARAM		(1ull << 63)
-#define I915_VM_PARAM     (2ull << 32)
 #define PRELIM_I915_GEM_VM_PARAM_SVM	(1 << 16)
-#define I915_GEM_VM_PARAM_SVM   0x1
 	__u64 param;
 
 	__u64 value;
 };
-#define drm_i915_gem_vm_param prelim_drm_i915_gem_vm_param
 
 #endif /* __I915_DRM_PRELIM_H__ */
