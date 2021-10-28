@@ -3,6 +3,7 @@
 ## Main URLs:
 
 [Intel® GPGPU Documents and Releases](https://dgpu-docs.intel.com/ "Intel® software for general purpose GPU capabilities").
+
 [Intel® DGPU Linux Kernel Source Reference](https://github.com/intel-gpu/kernel)
 
 ## Goals
