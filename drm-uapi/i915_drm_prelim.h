@@ -39,6 +39,26 @@ struct prelim_i915_uevent {
 #define PRELIM_I915_MEMORY_HEALTH_UEVENT	"MEMORY_HEALTH"
 };
 
+struct prelim_i915_user_extension {
+#define PRELIM_I915_USER_EXT		(1 << 16)
+#define PRELIM_I915_USER_EXT_MASK(x)	(x & 0xffff)
+};
+
+struct prelim_drm_i915_gem_context_create_ext_clone {
+#define PRELIM_I915_CONTEXT_CREATE_EXT_CLONE	(PRELIM_I915_USER_EXT | 1)
+	struct i915_user_extension base;
+	__u32 clone_id;
+	__u32 flags;
+#define PRELIM_I915_CONTEXT_CLONE_ENGINES	(1u << 0)
+#define PRELIM_I915_CONTEXT_CLONE_FLAGS		(1u << 1)
+#define PRELIM_I915_CONTEXT_CLONE_SCHEDATTR	(1u << 2)
+#define PRELIM_I915_CONTEXT_CLONE_SSEU		(1u << 3)
+#define PRELIM_I915_CONTEXT_CLONE_TIMELINE	(1u << 4)
+#define PRELIM_I915_CONTEXT_CLONE_VM		(1u << 5)
+#define PRELIM_I915_CONTEXT_CLONE_UNKNOWN	-(PRELIM_I915_CONTEXT_CLONE_VM << 1)
+	__u64 rsvd;
+};
+
 /*
  * PRELIM UAPI VERSION - /sys/<...>/drm/card<n>/prelim_uapi_version
  * MAJOR - to be incremented right after a major public Production branch
@@ -175,11 +195,6 @@ struct prelim_i915_uevent {
 #define __PRELIM_I915_PMU_DRIVER_ERROR_EVENT_ID_OFFSET (__I915_PMU_OTHER(0) + 3000)
 #define PRELIM_I915_PMU_DRIVER_ERROR_OBJECT_MIGRATION	(0)
 #define PRELIM_I915_PMU_DRIVER_ERROR(id)	(__PRELIM_I915_PMU_DRIVER_ERROR_EVENT_ID_OFFSET + (id))
-
-struct prelim_i915_user_extension {
-#define PRELIM_I915_USER_EXT		(1 << 16)
-#define PRELIM_I915_USER_EXT_MASK(x)	(x & 0xffff)
-};
 
 /* PRELIM ioctl's */
 
@@ -447,7 +462,7 @@ struct prelim_drm_i915_query_item {
 #define PRELIM_I915_EXEC_ENGINE_MASK    (0xff)
 #define PRELIM_I915_EXEC_ENGINE_MASK_SELECT (1ull << 55)
 
-#define __I915_EXEC_UNKNOWN_FLAGS (~(GENMASK_ULL(55, 48) | GENMASK_ULL(21, 0)))
+#define __PRELIM_I915_EXEC_UNKNOWN_FLAGS (~(GENMASK_ULL(55, 48) | ~__I915_EXEC_UNKNOWN_FLAGS))
 
 /*
  * Indicates the 2k user priority levels are statically mapped into 3 buckets as
@@ -835,7 +850,8 @@ struct prelim_drm_i915_gem_context_param {
 
 struct prelim_drm_i915_gem_context_create_ext {
 #define PRELIM_I915_CONTEXT_CREATE_FLAGS_ULLS		(1u << 31)
-#define I915_CONTEXT_CREATE_FLAGS_UNKNOWN (~(GENMASK(31, 31) | GENMASK(1, 0)))
+#define PRELIM_I915_CONTEXT_CREATE_FLAGS_UNKNOWN \
+	(~(PRELIM_I915_CONTEXT_CREATE_FLAGS_ULLS | ~I915_CONTEXT_CREATE_FLAGS_UNKNOWN))
 };
 
 /*
