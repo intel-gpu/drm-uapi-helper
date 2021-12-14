@@ -259,6 +259,9 @@ struct prelim_drm_i915_gem_context_create_ext_clone {
 
 /* VM_BIND feature availability */
 #define PRELIM_I915_PARAM_HAS_VM_BIND	(PRELIM_I915_PARAM | 6)
+
+/* Recoverable pagefault support */
+#define PRELIM_I915_PARAM_HAS_PAGE_FAULT	(PRELIM_I915_PARAM | 7)
 /* End getparam */
 
 struct prelim_drm_i915_gem_create_ext {
@@ -1364,7 +1367,8 @@ struct prelim_drm_i915_gem_vm_bind {
 #define PRELIM_I915_GEM_VM_BIND_IMMEDIATE	(1ull << 63)
 #define PRELIM_I915_GEM_VM_BIND_READONLY	(1ull << 62)
 #define PRELIM_I915_GEM_VM_BIND_CAPTURE		(1ull << 61)
-#define PRELIM_I915_GEM_VM_BIND_FD		(1ull << 60)
+#define PRELIM_I915_GEM_VM_BIND_MAKE_RESIDENT	(1ull << 60)
+#define PRELIM_I915_GEM_VM_BIND_FD		(1ull << 59)
 
 	__u64 extensions;
 };
@@ -1481,9 +1485,9 @@ struct prelim_drm_i915_gem_vm_region_ext {
 };
 
 struct prelim_drm_i915_gem_vm_control {
-/* FIXME: this is uabi for now but should be just (1 << 16) */
-#define PRELIM_I915_VM_CREATE_FLAGS_DISABLE_SCRATCH	((1 << 16) | 1)
-#define PRELIM_I915_VM_CREATE_FLAGS_UNKNOWN (~(GENMASK(16, 16) | GENMASK(0, 0)))
+#define PRELIM_I915_VM_CREATE_FLAGS_DISABLE_SCRATCH	(1 << 16)
+#define PRELIM_I915_VM_CREATE_FLAGS_ENABLE_PAGE_FAULT	(1 << 17)
+#define PRELIM_I915_VM_CREATE_FLAGS_UNKNOWN		(~(GENMASK(17, 16)))
 };
 
 struct prelim_drm_i915_vm_bind_ext_set_pat {
