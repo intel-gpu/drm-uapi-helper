@@ -6,7 +6,7 @@
 #ifndef __I915_DRM_PRELIM_H__
 #define __I915_DRM_PRELIM_H__
 
-#include "drm.h"
+#include "i915_drm.h"
 
 /*
  * Modifications to structs/values defined here are subject to
