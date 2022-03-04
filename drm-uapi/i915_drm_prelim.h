@@ -265,9 +265,12 @@ struct prelim_drm_i915_gem_create_ext {
 	 */
 	__u32 handle;
 	__u32 pad;
+
 #define PRELIM_I915_GEM_CREATE_EXT_SETPARAM	(PRELIM_I915_USER_EXT | 1)
-#define PRELIM_I915_GEM_CREATE_EXT_FLAGS_UNKNOWN \
-	(~PRELIM_I915_GEM_CREATE_EXT_SETPARAM)
+#define PRELIM_I915_GEM_CREATE_EXT_VM_PRIVATE	(PRELIM_I915_USER_EXT | 3)
+#define PRELIM_I915_GEM_CREATE_EXT_FLAGS_UNKNOWN			\
+	(~(PRELIM_I915_GEM_CREATE_EXT_SETPARAM |			\
+	   PRELIM_I915_GEM_CREATE_EXT_VM_PRIVATE))
 	__u64 extensions;
 };
 
@@ -307,6 +310,13 @@ struct prelim_drm_i915_gem_object_param {
 struct prelim_drm_i915_gem_create_ext_setparam {
 	struct i915_user_extension base;
 	struct prelim_drm_i915_gem_object_param param;
+};
+
+struct prelim_drm_i915_gem_create_ext_vm_private {
+	/** @base: Extension link. See struct i915_user_extension. */
+	struct i915_user_extension base;
+	/** @vm_id: Id of the VM to which Object is private */
+	__u32 vm_id;
 };
 
 #define PRELIM_PERF_VERSION	(1000)
