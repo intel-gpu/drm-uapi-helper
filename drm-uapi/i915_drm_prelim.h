@@ -381,6 +381,15 @@ enum prelim_drm_i915_eu_stall_property_id {
 
 	PRELIM_DRM_I915_EU_STALL_PROP_ENGINE_INSTANCE,
 
+	/**
+	 * This field specifies the minimum number of
+	 * EU stall data rows to be present in the kernel
+	 * buffer for poll() to set POLLIN (data present).
+	 * A default value of 1 is used by the driver if this
+	 * field is not specified.
+	 */
+	PRELIM_DRM_I915_EU_STALL_PROP_EVENT_REPORT_COUNT,
+
 	PRELIM_DRM_I915_EU_STALL_PROP_MAX
 };
 
