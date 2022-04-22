@@ -72,7 +72,7 @@ struct prelim_drm_i915_gem_context_create_ext_clone {
  *         the pile that is changing this number.
  */
 #define PRELIM_UAPI_MAJOR	2
-#define PRELIM_UAPI_MINOR	0
+#define PRELIM_UAPI_MINOR	1
 
 /*
  * Top 8 bits of every non-engine counter are GT id.
