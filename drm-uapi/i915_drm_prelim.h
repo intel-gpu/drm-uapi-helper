@@ -239,6 +239,9 @@ struct prelim_i915_user_extension {
 
 /* Recoverable pagefault support */
 #define PRELIM_I915_PARAM_HAS_PAGE_FAULT	(PRELIM_I915_PARAM | 7)
+
+/* Implicit scale support */
+#define PRELIM_I915_PARAM_HAS_SET_PAIR	(PRELIM_I915_PARAM | 8)
 /* End getparam */
 
 struct prelim_drm_i915_gem_create_ext {
@@ -292,6 +295,14 @@ struct prelim_drm_i915_gem_object_param {
  *	.param = PRELIM_I915_OBJECT_PARAM | PRELIM_I915_PARAM_MEMORY_REGIONS
  */
 #define PRELIM_I915_PARAM_MEMORY_REGIONS ((1 << 16) | 0x1)
+
+/*
+ * PRELIM_I915_PARAM_SET_PAIR:
+ *
+ * Allows a "paired" buffer object to be specified to allow implicit scaling to
+ * use two buffer objects with a single exported dma-buf file descriptor
+ */
+#define PRELIM_I915_PARAM_SET_PAIR ((1 << 17) | 0x1)
 	__u64 param;
 
 	/* Data value or pointer */
@@ -436,6 +447,7 @@ struct prelim_drm_i915_query_item {
 	 */
 #define PRELIM_DRM_I915_QUERY_CS_CYCLES			(PRELIM_DRM_I915_QUERY | 9)
 #define PRELIM_DRM_I915_QUERY_FABRIC_INFO		(PRELIM_DRM_I915_QUERY | 11)
+#define PRELIM_DRM_I915_QUERY_HW_IP_VERSION		(PRELIM_DRM_I915_QUERY | 12)
 #define PRELIM_DRM_I915_QUERY_ENGINE_INFO		(PRELIM_DRM_I915_QUERY | 13)
 };
 
@@ -494,6 +506,10 @@ enum prelim_drm_i915_oa_format {
 	PRELIM_I915_OA_FORMAT_A38u64_R2u64_B8_C8,
 	PRELIM_I915_OAM_FORMAT_A2u64_R2u64_B8_C8,
 	PRELIM_I915_OAC_FORMAT_A22u32_R2u32_B8_C8,
+
+	/* MTL */
+	PRELIM_I915_OAM_FORMAT_MPEC8u64_B8_C8,
+	PRELIM_I915_OAM_FORMAT_MPEC8u32_B8_C8,
 
 	PRELIM_I915_OA_FORMAT_MAX	/* non-ABI */
 };
@@ -967,6 +983,28 @@ struct prelim_drm_i915_query_cs_cycles {
 
 	/** Must be zero. */
 	__u32 rsvd;
+};
+
+/**
+ * prelim_struct drm_i915_query_hw_ip_version
+ *
+ * Hardware IP version (i.e., architecture generation) associated with a
+ * specific engine.
+ */
+struct prelim_drm_i915_query_hw_ip_version {
+	/** Engine to query HW IP version for */
+	struct i915_engine_class_instance engine;
+
+	__u8 flags;	/* MBZ */
+
+	/** Architecture  version */
+	__u8 arch;
+
+	/** Architecture release id */
+	__u8 release;
+
+	/** Stepping (e.g., A0, A1, B0, etc.) */
+	__u8 stepping;
 };
 
 /**
