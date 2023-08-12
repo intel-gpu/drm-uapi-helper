@@ -166,6 +166,9 @@ struct prelim_i915_user_extension {
 #define PRELIM_I915_PMU_GT_ERROR_CORRECTABLE_L3BANK             (122)
 #define PRELIM_I915_PMU_GT_ERROR_FATAL_SUBSLICE                 (123)
 #define PRELIM_I915_PMU_GT_ERROR_FATAL_L3BANK                   (124)
+#define PRELIM_I915_PVC_PMU_SOC_ERROR_NONFATAL_CD0_MDFI         (125)
+#define PRELIM_I915_PVC_PMU_SOC_ERROR_NONFATAL_MDFI_EAST        (126)
+#define PRELIM_I915_PVC_PMU_SOC_ERROR_NONFATAL_MDFI_SOUTH       (127)
 
 #define PRELIM_I915_PMU_HW_ERROR(gt, id) \
 	((__PRELIM_I915_PMU_HW_ERROR_EVENT_ID_OFFSET + (id)) | \
@@ -334,10 +337,9 @@ struct prelim_drm_i915_gem_object_param {
  *
  * Specifies that this buffer object should support 'chunking' and chunk
  * granularity. Allows internal KMD paging/migration/eviction handling to
- * operate on a single chunk instead of the whole buffer object.
- * Size specified in bytes and must be non-zero and a power of 2.
- * KMD will return error (-ENOSPC) if CHUNK_SIZE is deemed to be too small
- * to be supported.
+ * operate on a single chunk instead of the whole buffer object. Size is
+ * specified in bytes. KMD will return error (-ENOSPC) if CHUNK_SIZE is
+ * smaller than 64 KiB or (-EINVAL) if not aligned to 64 KiB.
  */
 #define PRELIM_I915_PARAM_SET_CHUNK_SIZE ((1 << 18) | 1)
 	__u64 param;
