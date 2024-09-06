@@ -21,8 +21,8 @@
  * IN THE SOFTWARE.
  */
 
-#ifndef _UAPI_VC4_DRM_H_
-#define _UAPI_VC4_DRM_H_
+#ifndef _VC4_DRM_H_
+#define _VC4_DRM_H_
 
 #include "drm.h"
 
@@ -439,4 +439,4 @@ struct drm_vc4_perfmon_get_values {
 }
 #endif
 
-#endif /* _UAPI_VC4_DRM_H_ */
+#endif /* _VC4_DRM_H_ */

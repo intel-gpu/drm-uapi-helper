@@ -24,8 +24,8 @@
  *
  */
 
-#ifndef _UAPI_I915_DRM_H_
-#define _UAPI_I915_DRM_H_
+#ifndef _I915_DRM_H_
+#define _I915_DRM_H_
 
 #include "drm.h"
 
@@ -75,7 +75,7 @@ extern "C" {
  * redefine the interface more easily than an ever growing struct of
  * increasing complexity, and for large parts of that interface to be
  * entirely optional. The downside is more pointer chasing; chasing across
- * the __user boundary with pointers encapsulated inside u64.
+ * the boundary with pointers encapsulated inside u64.
  *
  * Example chaining:
  *
@@ -559,25 +559,25 @@ typedef struct drm_i915_batchbuffer {
 	int DR1;		/* hw flags for GFX_OP_DRAWRECT_INFO */
 	int DR4;		/* window origin for GFX_OP_DRAWRECT_INFO */
 	int num_cliprects;	/* mulitpass with multiple cliprects? */
-	struct drm_clip_rect __user *cliprects;	/* pointer to userspace cliprects */
+	struct drm_clip_rect *cliprects;	/* pointer to userspace cliprects */
 } drm_i915_batchbuffer_t;
 
 /* As above, but pass a pointer to userspace buffer which can be
  * validated by the kernel prior to sending to hardware.
  */
 typedef struct _drm_i915_cmdbuffer {
-	char __user *buf;	/* pointer to userspace command buffer */
+	char *buf;	/* pointer to userspace command buffer */
 	int sz;			/* nr bytes in buf */
 	int DR1;		/* hw flags for GFX_OP_DRAWRECT_INFO */
 	int DR4;		/* window origin for GFX_OP_DRAWRECT_INFO */
 	int num_cliprects;	/* mulitpass with multiple cliprects? */
-	struct drm_clip_rect __user *cliprects;	/* pointer to userspace cliprects */
+	struct drm_clip_rect *cliprects;	/* pointer to userspace cliprects */
 } drm_i915_cmdbuffer_t;
 
 /* Userspace can request & wait on irq's:
  */
 typedef struct drm_i915_irq_emit {
-	int __user *irq_seq;
+	int *irq_seq;
 } drm_i915_irq_emit_t;
 
 typedef struct drm_i915_irq_wait {
@@ -827,7 +827,7 @@ struct drm_i915_getparam {
 	 * WARNING: Using pointers instead of fixed-size u64 means we need to write
 	 * compat32 code. Don't repeat this mistake.
 	 */
-	int __user *value;
+	int *value;
 };
 
 /**
@@ -857,7 +857,7 @@ typedef struct drm_i915_mem_alloc {
 	int region;
 	int alignment;
 	int size;
-	int __user *region_offset;	/* offset from start of fb or agp */
+	int *region_offset;	/* offset from start of fb or agp */
 } drm_i915_mem_alloc_t;
 
 typedef struct drm_i915_mem_free {
@@ -2492,7 +2492,7 @@ struct i915_context_engines_parallel_submit {
 	 */
 	struct i915_engine_class_instance engines[];
 
-} __packed;
+} __attribute__((packed));
 
 #define I915_DEFINE_CONTEXT_ENGINES_PARALLEL_SUBMIT(name__, N__) struct { \
 	struct i915_user_extension base; \
@@ -2929,7 +2929,7 @@ struct drm_i915_perf_open_param {
  * Change metrics_set captured by a stream.
  *
  * If the stream is bound to a specific context, the configuration change
- * will performed inline with that context such that it takes effect before
+ * will performed __inline__ with that context such that it takes effect before
  * the next execbuf submission.
  *
  * Returns the previously bound metrics set id, or a negative error code.
@@ -3913,4 +3913,4 @@ struct drm_i915_gem_create_ext_set_pat {
 }
 #endif
 
-#endif /* _UAPI_I915_DRM_H_ */
+#endif /* _I915_DRM_H_ */

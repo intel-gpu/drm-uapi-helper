@@ -24,8 +24,8 @@
  *
  */
 
-#ifndef _UAPI_VGEM_DRM_H_
-#define _UAPI_VGEM_DRM_H_
+#ifndef _VGEM_DRM_H_
+#define _VGEM_DRM_H_
 
 #include "drm.h"
 
@@ -59,4 +59,4 @@ struct drm_vgem_fence_signal {
 }
 #endif
 
-#endif /* _UAPI_VGEM_DRM_H_ */
+#endif /* _VGEM_DRM_H_ */

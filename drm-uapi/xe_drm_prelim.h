@@ -3,8 +3,8 @@
  * Copyright © 2023 Intel Corporation
  */
 
-#ifndef _UAPI_XE_DRM_PRELIM_H_
-#define _UAPI_XE_DRM_PRELIM_H_
+#ifndef _XE_DRM_PRELIM_H_
+#define _XE_DRM_PRELIM_H_
 
 #include "xe_drm.h"
 
@@ -372,4 +372,4 @@ struct prelim_drm_xe_eudebug_event_vm_bind_op_metadata {
 	__u64 metadata_cookie;
 };
 
-#endif /* _UAPI_XE_DRM_PRELIM_H_ */
+#endif /* _XE_DRM_PRELIM_H_ */
