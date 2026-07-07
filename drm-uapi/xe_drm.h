@@ -2530,8 +2530,6 @@ struct drm_xe_exec_queue_set_property {
 	__u64 reserved[2];
 };
 
-#include "xe_drm_prelim.h"
-
 /**
  * DOC: Xe DRM RAS
  *
@@ -2610,6 +2608,8 @@ enum drm_xe_ras_error_component {
 	[DRM_XE_RAS_ERR_COMP_CORE_COMPUTE] = "core-compute",		\
 	[DRM_XE_RAS_ERR_COMP_SOC_INTERNAL] = "soc-internal"		\
 }
+
+#include "xe_drm_prelim.h"
 
 #if defined(__cplusplus)
 }
